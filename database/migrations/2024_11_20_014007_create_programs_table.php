@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('location', 255); // Lokasi magang
             $table->integer('duration')->default(1); // Durasi magang (dalam bulan, default 1 bulan)
             $table->string('career_opportunities', 255); // Peluang karier
-            $table->text('roles'); // Deskripsi program
+            $table->text('description'); // Deskripsi program
 
             // Skor untuk perhitungan SAW
             $table->float('field_score')->nullable(); 
