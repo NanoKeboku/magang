@@ -7,35 +7,50 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\UserPreferenceController;
 use App\Http\Controllers\PreferenceController;
-
-
-
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 
 
 /*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
+|-------------------------------------------------------------------------- 
+| Web Routes 
+|-------------------------------------------------------------------------- 
+| 
+| Here is where you can register web routes for your application. These 
+| routes are loaded by the RouteServiceProvider and all of them will 
+| be assigned to the "web" middleware group. Make something great! 
+| 
 */
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::get('/recommendations', [RecommendationController::class, 'index'])->middleware('auth');
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // Untuk menampilkan form login
-Route::post('/login', [LoginController::class, 'login'])->name('login.post'); // Untuk memproses login
+
+// Route Login
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+    Route::middleware(['checkrole:admin'])->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    });
+
+    Route::middleware(['checkrole:user'])->group(function () {
+        Route::get('/user/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+    });
+});
+
+// Route Buat akun
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+
+// Rute untuk Program dan Preferences
 Route::resource('programs', ProgramController::class);
 Route::resource('preferences', PreferenceController::class);
-Route::post('/preferences/store', [UserPreferenceController::class, 'store'])->name('preferences.store');
-Route::get('preferences/create', [PreferenceController::class, 'create'])->name('preferences.create');
-Route::post('preferences/store', [PreferenceController::class, 'store'])->name('preferences.store');
-Route::get('/programs/create', [ProgramController::class, 'create'])->name('programs.create');
-Route::post('/programs/store', [ProgramController::class, 'store'])->name('programs.store');
 
+// Rute untuk Recommendations
+Route::delete('/recommendations/{id}', [AdminController::class, 'destroy'])->name('recommendations.destroy');

@@ -21,8 +21,9 @@ class AuthController extends Controller
         // Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required',
-            'password' => 'required',  // password confirmation
+            'email' => 'required|email|unique:users,email',  // Pastikan email unik
+            'password' => 'required|string|confirmed', // Pastikan password valid dan cocok dengan konfirmasi
+            'role' => 'required|string|in:admin,user', // Validasi role yang diterima
         ]);
 
         // Membuat pengguna baru dengan hash password
@@ -30,9 +31,10 @@ class AuthController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->password = Hash::make($validated['password']);  // Hash password menggunakan Bcrypt
+        $user->role = $validated['role'];  // Menyimpan role yang dipilih
         $user->save();
 
         // Redirect ke halaman login setelah berhasil mendaftar
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Registration successful! Please log in.');
     }
 }

@@ -7,6 +7,7 @@ use App\Models\UserPreference;
 use App\Services\SAWService;
 use Illuminate\Http\Request;
 use App\Models\Preference; 
+use App\Models\Recommendation;
 
 class RecommendationController extends Controller
 {
@@ -30,5 +31,17 @@ class RecommendationController extends Controller
 
     // Tampilkan hasil ke view
     return view('recommendations.index', compact('recommendations'));
+}
+public function destroy($id)
+{
+    // Temukan data berdasarkan ID
+    $recommendation = Recommendation::findOrFail($id);
+
+    // Hapus data
+    $recommendation->delete();
+
+    // Redirect atau kembalikan response
+    return redirect()->route('recommendations.index')
+                     ->with('success', 'Data berhasil dihapus');
 }
 }

@@ -14,9 +14,9 @@
         <tbody>
             @foreach ($recommendations as $recommendation)
             <tr>
-                <td>{{ $recommendation['program']->name }}</td>
-                <td>{{ $recommendation['program']->company }}</td>
-                <td>{{ $recommendation['score'] }}</td>
+                <td>{{ $recommendation->program->name }}</td>
+                <td>{{ $recommendation->program->company }}</td>
+                <td>{{ $recommendation->score }}</td>
             </tr>
             @endforeach
         </tbody>
